@@ -1,4 +1,4 @@
-# server.py
+"""Sistema de conexión de servidor"""
 import socket
 
 client_socket_global = None  # Este será accesible desde fuera
