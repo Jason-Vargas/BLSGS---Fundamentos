@@ -1,10 +1,10 @@
 {
     "Jason": {
         "clave": "12345",
-        "puntaje": 2
+        "puntaje": 6
     },
     "camacho": {
         "clave": "a",
-        "puntaje": 7
+        "puntaje": 5
     }
 }
