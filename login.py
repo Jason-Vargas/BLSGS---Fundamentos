@@ -25,13 +25,20 @@ def ventana_login(callback_al_loguear):
         login.destroy()
         ventana_registro(callback_al_loguear)
 
+    def seleccionar_icono(valor):
+        icono_seleccionado.set(valor)
+        for boton in botones_icono.values():
+            boton.config(relief=tk.RAISED)
+        botones_icono[valor].config(relief=tk.SUNKEN)
+
+
     def verificar_login():
         usuario = entrada_usuario.get()
         clave = entrada_clave.get()
         usuarios = leer_usuarios()
 
         if usuario in usuarios and usuarios[usuario]["clave"] == clave:
-            messagebox.showinfo("Éxito", "Inicio de sesión exitoso")
+            messagebox.showinfo("Éxito", f"Inicio de sesión exitoso con ícono '{icono_seleccionado.get()}'")
             login.destroy()
             callback_al_loguear(usuario)
         else:
@@ -39,7 +46,7 @@ def ventana_login(callback_al_loguear):
 
     login = tk.Tk()
     login.title("Login")
-    login.geometry("300x200")
+    login.geometry("300x280")
     login.configure(bg="#e0f7fa")
 
     tk.Label(login, text="Usuario:", bg="#e0f7fa").pack(pady=5)
@@ -50,6 +57,22 @@ def ventana_login(callback_al_loguear):
     entrada_clave = tk.Entry(login, show="*")
     entrada_clave.pack()
 
+    # Selección de ícono
+    tk.Label(login, text="Selecciona un ícono:", bg="#e0f7fa").pack(pady=5)
+    icono_seleccionado = tk.StringVar(value="🙂")
+    frame_iconos = tk.Frame(login, bg="#e0f7fa")
+    frame_iconos.pack()
+
+    iconos = ["🙂", "🐱", "🚀"]
+    botones_icono = {}
+
+    for icono in iconos:
+        btn = tk.Button(frame_iconos, text=icono, font=("Arial", 16), width=4,
+                        command=lambda i=icono: seleccionar_icono(i))
+        btn.pack(side=tk.LEFT, padx=5)
+        botones_icono[icono] = btn
+
+    # Botones de acción
     tk.Button(login, text="Iniciar sesión", command=verificar_login).pack(pady=10)
     tk.Button(login, text="Registrarse", command=mostrar_registro).pack(pady=5)
 

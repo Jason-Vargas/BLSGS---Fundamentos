@@ -30,7 +30,7 @@ def guardar_puntaje(usuario, puntaje):
 def ventana_juego(usuario):
     juego = tk.Toplevel()
     juego.title("Interfaz del Juego")
-    juego.geometry("300x430")
+    juego.geometry("300x480")  # un poco más alto para el display
     juego.configure(bg="white")
 
     etiqueta = tk.Label(juego, text=f"Jugador: {usuario}", font=("Arial", 14), bg="white")
@@ -45,6 +45,11 @@ def ventana_juego(usuario):
         label_puntaje.config(text=f"Puntaje: {puntaje.get()}")
     puntaje.trace_add("write", actualizar_puntaje)
 
+    # Etiqueta para mostrar el valor actual del display 7 segmentos
+    display_valor = tk.StringVar(value="0")
+    label_display = tk.Label(juego, textvariable=display_valor, font=("Arial", 48), fg="blue", bg="white")
+    label_display.pack(pady=20)
+
     status_label = tk.Label(juego, text="", font=("Arial", 12), fg="red", bg="white")
     status_label.pack(pady=10)
 
@@ -56,16 +61,6 @@ def ventana_juego(usuario):
                 print(f"Enviado: {mensaje}")
             except:
                 print("Error al enviar comando.")
-
-    def reiniciar_juego():
-        puntaje.set(0)
-        status_label.config(text="")
-        if server.client_socket_global:
-            try:
-                server.client_socket_global.send(b"reiniciar")
-                print("Enviado: reiniciar")
-            except:
-                print("No se pudo enviar mensaje de reinicio")
 
     def mostrar_error_y_salir():
         def animar_error():
@@ -79,7 +74,7 @@ def ventana_juego(usuario):
                 juego.update()
                 time.sleep(0.3)
             guardar_puntaje(usuario, puntaje.get())
-            juego.destroy() #eliminado para mantener la ventana abierta
+            juego.destroy()  # cerrar ventana tras error
 
         threading.Thread(target=animar_error, daemon=True).start()
 
@@ -93,11 +88,15 @@ def ventana_juego(usuario):
                         break
                     mensaje = data.decode().strip()
                     print("Mensaje recibido en GUI:", mensaje)
+
                     if mensaje == "error":
                         mostrar_error_y_salir()
                         break
                     elif mensaje == "acierto":
                         puntaje.set(puntaje.get() + 1)
+                    elif mensaje.startswith("display:"):
+                        valor = mensaje.split(":", 1)[1].strip()
+                        display_valor.set(valor)
                 except Exception as e:
                     print("Error al recibir mensaje en GUI:", e)
                     break
@@ -109,12 +108,9 @@ def ventana_juego(usuario):
                             command=lambda n=i: enviar_boton(n), width=15)
         boton.pack(pady=5)
 
-    btn_reiniciar = tk.Button(juego, text="Volver a Jugar", font=("Arial", 11),
-                                command=reiniciar_juego, fg="blue")
-    btn_reiniciar.pack(pady=5)
-
     btn_cerrar = tk.Button(juego, text="Cerrar", font=("Arial", 11),
                             command=lambda: [guardar_puntaje(usuario, puntaje.get()), juego.destroy()])
     btn_cerrar.pack(pady=10)
 
     threading.Thread(target=escuchar_mensajes, daemon=True).start()
+
