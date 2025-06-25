@@ -4,6 +4,7 @@ import tkinter as tk
 import threading
 import server
 from fama import salon_fama
+from juego import ventana_juego
 
 def interfaz(usuario):
     ventana = tk.Tk()
@@ -27,7 +28,8 @@ def interfaz(usuario):
     estado_conexion.pack(pady=5)
 
     # Botón de Jugar (inicialmente desactivado)
-    boton_jugar = tk.Button(ventana, text="Jugar", state="disabled", command=lambda: print("¡Comenzando el juego!"))
+    boton_jugar = tk.Button(ventana, text="Jugar", state="disabled", command=lambda: ventana_juego(usuario))
+
     boton_jugar.pack(pady=10)
 
     boton_salon_fama = tk.Button(ventana, text="Salón de la Fama", command=salon_fama)

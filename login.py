@@ -15,9 +15,10 @@ def leer_usuarios():
 
 def guardar_usuario(usuario, clave):
     usuarios = leer_usuarios()
-    usuarios[usuario] = clave
+    usuarios[usuario] = {"clave": clave, "puntaje": 0}
     with open(ARCHIVO_USUARIOS, "w") as f:
         json.dump(usuarios, f, indent=4)
+
 
 def ventana_login(callback_al_loguear):
     def mostrar_registro():
@@ -29,7 +30,7 @@ def ventana_login(callback_al_loguear):
         clave = entrada_clave.get()
         usuarios = leer_usuarios()
 
-        if usuario in usuarios and usuarios[usuario] == clave:
+        if usuario in usuarios and usuarios[usuario]["clave"] == clave:
             messagebox.showinfo("Éxito", "Inicio de sesión exitoso")
             login.destroy()
             callback_al_loguear(usuario)
